@@ -1,95 +1,158 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import Search from "@/app/_components/Search";
+import ResultList from "@/app/_components/ResultList";
+import { usePlacesSearch } from "./usePlacesSearch";
+import { heritageSites } from "./heritage-example";
+
+const MyComponent = () => {
+  const [searchQuery, setSearchQuery] = useState(""); // 検索キーワード
+  const [selectedPlace, setSelectedPlace] = useState<any>(null); // 選択された場所
+  const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 }); // 地図の中心座標
+  const [showResults, setShowResults] = useState(false); // 検索結果の表示状態
+  const [isMapView, setIsMapView] = useState(false); // 地図を全画面表示するかどうか
+
+  const { places, loadPlaces } = usePlacesSearch(searchQuery, mapCenter);
+
+  // 検索ボタンクリック時の処理
+  const handleSearchClick = () => {
+    if (searchQuery.trim()) {
+      loadPlaces();
+      setShowResults(true); // 検索時にリストを表示
+    }
+  };
+
+  // リストから場所を選択したときの処理
+  const handlePlaceClick = (place: any) => {
+    setSelectedPlace(place);
+    setMapCenter(place.geometry.location);
+    setIsMapView(true); // 地図をフルスクリーン表示
+  };
+
+  const closeResults = () => {
+    setShowResults(false);
+  };
+
+  // 地図から検索画面に戻る
+  const handleBack = () => {
+    setIsMapView(false);
+    setSelectedPlace(null);
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <LoadScript
+      googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!}
+      libraries={["places"]}
+    >
+      {!isMapView && (
+        <>
+          {/* 検索コンポーネント */}
+          <Search
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleSearchClick={handleSearchClick}
+          />
+
+          {/* 世界遺産リスト */}
+          <div
+            style={{
+              marginTop: "140px",
+              padding: "10px",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              backgroundColor: "#f9f9f9",
+            }}
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+            <h3>世界遺産一覧(例)</h3>
+            <ResultList
+              places={heritageSites}
+              handlePlaceClick={handlePlaceClick}
+              selectedPlace={selectedPlace}
+              closeResults={() => {}} // 閉じるボタンなし
             />
-          </a>
-        </div>
-      </div>
+          </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+          {/* 検索結果（検索後に表示） */}
+          {showResults && (
+            <div
+              style={{
+                marginTop: "20px",
+                padding: "10px",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                backgroundColor: "#fff",
+              }}
+            >
+              <h3>検索結果</h3>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+              {/* 閉じるボタンを配置 */}
+              <button
+                onClick={closeResults}
+                style={{
+                  marginTop: "5px",
+                  width: "10%",
+                  backgroundColor: "black",
+                  color: "white",
+                  border: "none",
+                  padding: "10px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                }}
+              >
+                閉じる
+              </button>
+
+              <ResultList
+                places={places}
+                handlePlaceClick={handlePlaceClick}
+                selectedPlace={selectedPlace}
+                closeResults={closeResults}
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      {/* 地図表示 */}
+      {isMapView && selectedPlace && (
+        <GoogleMap
+          mapContainerStyle={{ height: "100vh", width: "100%" }}
+          center={selectedPlace.geometry.location}
+          zoom={17}
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+          <Marker
+            position={selectedPlace.geometry.location}
+            title={selectedPlace.name}
+          />
+        </GoogleMap>
+      )}
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+      {/* 戻るボタン */}
+      {isMapView && (
+        <button
+          onClick={handleBack}
+          style={{
+            position: "absolute",
+            bottom: "20px",
+            left: "20px",
+            zIndex: 2,
+            padding: "10px 16px",
+            fontSize: "16px",
+            backgroundColor: "white",
+            color: "black",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            cursor: "pointer",
+          }}
         >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+          戻る
+        </button>
+      )}
+    </LoadScript>
+  );
+};
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default MyComponent;
