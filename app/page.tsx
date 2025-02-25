@@ -136,11 +136,11 @@ const MyComponent = () => {
           onClick={handleBack}
           style={{
             position: "absolute",
-            bottom: "20px",
-            left: "20px",
+            bottom: "1px",
+            left: "17px",
             zIndex: 2,
-            padding: "10px 16px",
-            fontSize: "16px",
+            padding: "10px 20px",
+            fontSize: "20px",
             backgroundColor: "white",
             color: "black",
             borderRadius: "8px",
