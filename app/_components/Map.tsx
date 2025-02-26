@@ -1,19 +1,15 @@
 import React from "react";
 import { GoogleMap, Marker } from "@react-google-maps/api";
+import styles from "@/app/global.module.css";
 
 interface MapProps {
   selectedPlace: any;
 }
 
-const containerStyle = {
-  height: "100vh",
-  width: "100%",
-};
-
 const Map: React.FC<MapProps> = ({ selectedPlace }) => {
   return (
     <GoogleMap
-      mapContainerStyle={containerStyle}
+      mapContainerClassName={styles.mapContainer}
       center={selectedPlace.geometry.location}
       zoom={17}
     >
