@@ -1,0 +1,105 @@
+/* タイトル */
+.title {
+  text-align: center;
+  font-size: 2rem;
+  margin-top: 20px;
+  color: #333;
+}
+
+/* 検索バー */
+.searchContainer {
+  margin-top: 50px;
+  padding: 10px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+}
+
+/* 検索バーの入力欄 */
+.searchInput {
+  padding: 8px;
+  font-size: 16px;
+  width: 50%;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+/* 検索ボタン */
+.searchButton {
+  padding: 8px 14px;
+  font-size: 16px;
+  margin-left: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+/* 検索結果表示 */
+.resultContainer {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+/* 検索結果 */
+.resultListContainer {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* 検索結果 */
+.resultItem {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  background-color: white;
+  color: #333;
+  font-size: 16px;
+}
+
+.selectedResultItem {
+  background-color: #fff;
+}
+
+.closeButton {
+  margin-top: 5px;
+  width: 10%;
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* 地図 */
+.mapContainer {
+    overflow: hidden;
+    width: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+
+.backButton {
+  position: absolute;
+  bottom: 1px;
+  left: 17px;
+  z-index: 2;
+  padding: 10px 20px;
+  font-size: 20px;
+  background-color: white;
+  color: black;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
