@@ -6,6 +6,7 @@ import Search from "@/app/_components/Search";
 import ResultList from "@/app/_components/ResultList";
 import { usePlacesSearch } from "./usePlacesSearch";
 import { heritageSites } from "./heritage-example";
+import styles from "@/app/global.module.css";
 
 const MyComponent = () => {
   const [searchQuery, setSearchQuery] = useState(""); // 検索キーワード
@@ -16,26 +17,23 @@ const MyComponent = () => {
 
   const { places, loadPlaces } = usePlacesSearch(searchQuery, mapCenter);
 
-  // 検索ボタンクリック時の処理
   const handleSearchClick = () => {
     if (searchQuery.trim()) {
       loadPlaces();
-      setShowResults(true); // 検索時にリストを表示
+      setShowResults(true);
     }
   };
 
-  // リストから場所を選択したときの処理
   const handlePlaceClick = (place: any) => {
     setSelectedPlace(place);
     setMapCenter(place.geometry.location);
-    setIsMapView(true); // 地図をフルスクリーン表示
+    setIsMapView(true);
   };
 
   const closeResults = () => {
     setShowResults(false);
   };
 
-  // 地図から検索画面に戻る
   const handleBack = () => {
     setIsMapView(false);
     setSelectedPlace(null);
@@ -46,111 +44,62 @@ const MyComponent = () => {
       googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!}
       libraries={["places"]}
     >
-      {!isMapView && (
-        <>
-          {/* 検索コンポーネント */}
-          <Search
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            handleSearchClick={handleSearchClick}
-          />
 
-          {/* 世界遺産リスト */}
-          <div
-            style={{
-              marginTop: "140px",
-              padding: "10px",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-              backgroundColor: "#f9f9f9",
-            }}
-          >
-            <h3>世界遺産一覧(例)</h3>
-            <ResultList
-              places={heritageSites}
-              handlePlaceClick={handlePlaceClick}
-              selectedPlace={selectedPlace}
-              closeResults={() => {}} // 閉じるボタンなし
+        {!isMapView && (
+          <>
+            <h1 className={styles.title}>世界遺産サーチ</h1>
+
+            <Search
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              handleSearchClick={handleSearchClick}
             />
-          </div>
 
-          {/* 検索結果（検索後に表示） */}
-          {showResults && (
-            <div
-              style={{
-                marginTop: "20px",
-                padding: "10px",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                backgroundColor: "#fff",
-              }}
-            >
-              <h3>検索結果</h3>
-
-              {/* 閉じるボタンを配置 */}
-              <button
-                onClick={closeResults}
-                style={{
-                  marginTop: "5px",
-                  width: "10%",
-                  backgroundColor: "black",
-                  color: "white",
-                  border: "none",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  fontSize: "16px",
-                }}
-              >
-                閉じる
-              </button>
-
+            <div className={styles.searchContainer}>
+              <h3>世界遺産一覧(例)</h3>
               <ResultList
-                places={places}
+                places={heritageSites}
                 handlePlaceClick={handlePlaceClick}
                 selectedPlace={selectedPlace}
-                closeResults={closeResults}
+                closeResults={() => {}}
               />
             </div>
-          )}
-        </>
-      )}
 
-      {/* 地図表示 */}
-      {isMapView && selectedPlace && (
-        <GoogleMap
-          mapContainerStyle={{ height: "100vh", width: "100%" }}
-          center={selectedPlace.geometry.location}
-          zoom={17}
-        >
-          <Marker
-            position={selectedPlace.geometry.location}
-            title={selectedPlace.name}
-          />
-        </GoogleMap>
-      )}
+            {showResults && (
+              <div className={styles.resultContainer}>
+                <h3>検索結果</h3>
 
-      {/* 戻るボタン */}
-      {isMapView && (
-        <button
-          onClick={handleBack}
-          style={{
-            position: "absolute",
-            bottom: "1px",
-            left: "17px",
-            zIndex: 2,
-            padding: "10px 20px",
-            fontSize: "20px",
-            backgroundColor: "white",
-            color: "black",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-            cursor: "pointer",
-          }}
-        >
-          戻る
-        </button>
-      )}
+                <button onClick={closeResults} className={styles.closeButton}>
+                  閉じる
+                </button>
+
+                <ResultList
+                  places={places}
+                  handlePlaceClick={handlePlaceClick}
+                  selectedPlace={selectedPlace}
+                  closeResults={closeResults}
+                />
+              </div>
+            )}
+          </>
+        )}
+        {isMapView && selectedPlace && (
+          <GoogleMap
+            mapContainerStyle={{ height: "100vh", width: "100%" }}
+            center={selectedPlace.geometry.location}
+            zoom={17}
+          >
+            <Marker
+              position={selectedPlace.geometry.location}
+              title={selectedPlace.name}
+            />
+          </GoogleMap>
+        )}
+        {isMapView && (
+          <button onClick={handleBack} className={styles.backButton}>
+            戻る
+          </button>
+        )}
     </LoadScript>
   );
 };
