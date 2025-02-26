@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "@/app/global.module.css";
 
 interface Result {
   place_id: string;
@@ -25,29 +26,16 @@ const ResultList: React.FC<ResultListProps> = ({
 }) => {
   return (
     <div>
-      <div
-        style={{
-          maxHeight: "300px",
-          overflowY: "auto",
-          marginTop: "10px",
-          fontFamily: "'Roboto', sans-serif",
-        }}
-      >
+      <div className={styles.resultListContainer}>
         {places.map((place) => (
           <div
             key={place.place_id}
             onClick={() => handlePlaceClick(place)}
-            style={{
-              padding: "10px",
-              borderBottom: "1px solid #ddd",
-              cursor: "pointer",
-              backgroundColor:
-                selectedPlace?.place_id === place.place_id
-                  ? "#f0f0f0"
-                  : "white",
-              color: "#333",
-              fontSize: "16px",
-            }}
+            className={`${styles.resultItem} ${
+              selectedPlace?.place_id === place.place_id
+                ? styles.selectedResultItem
+                : ""
+            }`}
           >
             {place.name}
           </div>
